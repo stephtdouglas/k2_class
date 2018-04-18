@@ -18,7 +18,7 @@ from scipy.signal import argrelextrema
 import k2spin
 from k2spin import prot
 
-from kep_io import k2sc_io, k2sff_io
+from kep_io import k2sc_io, k2sff_io, choose_initial_k2sff
 
 
 def run_one(t,f,epic=None):
@@ -196,8 +196,8 @@ def run_list(list_filenames,output_filename):
         print(epic)
 
         if "k2sff" in filename:
-            best_ext = choose_initial_k2sff(filename)
-            time,flux = k2sff_io(filename,best_ext)
+#             best_ext = choose_initial_k2sff(filename)
+            time,flux = k2sff_io(filename,"best")
         elif "k2sc" in filename:
             time,flux = k2sc_io(filename)
         one_out = run_one(time,flux,epic)

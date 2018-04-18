@@ -9,8 +9,10 @@ import numpy as np
 from astropy.io import fits
 import astropy.io.ascii as at
 
+import k2spin
+from k2spin import prot
 
-def k2sff_io(filename, ext=="best"):
+def k2sff_io(filename, ext="best"):
     """ Read in a K2SFF light curve file, and return the time and flux
     arrays from the selected extension.
 
