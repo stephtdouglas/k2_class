@@ -17,6 +17,8 @@ def run_fft(times,yvals,modes=np.arange(1,15,3),input_period=None,plot=False):
 
     times should be in seconds
 
+    (shouldn't need this for Columbia class)
+
     """
 
     plot_ymin,plot_ymax = np.percentile(yvals,[1,99])
@@ -103,18 +105,34 @@ def run_fft(times,yvals,modes=np.arange(1,15,3),input_period=None,plot=False):
 
 def acf(times,yvals):
     """
-    computes the autocorrelation function for an evenly-sampled time-series
+    Compute the autocorrelation function for an evenly-sampled time-series
+
+    Inputs:
+    -------
+    times: array of epochs/time points
+
+    yvals: array of fluxes corresponding to times
+
+    Returns:
+    --------
+    periods: array of lag times
+
+    ACF: autocorrelation function corresponding to the lags
+
     """
-    cadence = np.median(np.diff(times))
+
+    # And the number of observations 
+    # (the maximum lag that will be tested is half the number of observations)
     N = len(yvals)
     max_lag = N/2
-
-    median_yval = np.median(yvals)
-    norm_term = np.sum((yvals - median_yval)**2)
     lags = np.arange(max_lag)
 
+    # Calculate values for normalizing the ACF
+    median_yval = np.median(yvals)
+    norm_term = np.sum((yvals - median_yval)**2)
     #print median_yval,norm_term,max_lag
 
+    # Compute the ACF following McQuillan+2013
     ACF0 = [np.sum((yvals[:N-j] - median_yval)*(yvals[j:] - median_yval)) for j in lags]
     ACF1 = ACF0/norm_term
 
@@ -123,6 +141,8 @@ def acf(times,yvals):
     ACF = ap_convolve(ACF1, gauss_kernel,boundary="extend")
     #ACF = ACF1
 
+    # Compute the lags in index-space to time-space
+    cadence = np.median(np.diff(times))
     periods = cadence*lags
 
     return periods,ACF
@@ -131,6 +151,19 @@ def acf(times,yvals):
 def find_prot(periods,ACF):
     """
     Determines the Prot from an ACF, using procedure in McQuillan et al. (2013)
+
+    Inputs:
+    -------
+    periods: array of lag times
+
+    ACF: autocorrelation function corresponding to the lags
+
+    Returns:
+    --------
+    best_period: 
+         the period corresponding to the first local maximum in the ACF, 
+         if there are no peaks in the ACF, returns -1
+
     """
 
     # Find all local maxima in the ACF. If none, return -1
@@ -199,8 +232,30 @@ def find_prot(periods,ACF):
     return best_period
 
 
-def run_acf(times,yvals,input_period=None,plot=False):
-    """ runs the acf function above, and plots the result """
+def run_acf(times,yvals,input_period=None,plot=False,output_filename="acf.png"):
+    """ 
+    Run the ACF on the input light curve, and plot the result if desired 
+
+    Inputs:
+    -------
+    times: array of epochs/time points
+
+    yvals: array of fluxes corresponding to times
+
+    input_period: (optional) known/existing period for comparison
+
+    plot: (optional) True/False whether to plot outputs
+
+    output_filename: (required if plot=True) filename for resulting plot
+
+    Returns:
+    --------
+    peak_loc: 
+         the period corresponding to the first local maximum in the ACF, 
+         if there are no peaks in the ACF, returns -1
+
+
+    """
 
     plot_ymin,plot_ymax = np.percentile(yvals,[1,99])
 
@@ -242,5 +297,7 @@ def run_acf(times,yvals,input_period=None,plot=False):
         ax3.set_ylabel("Flux")
         ax3.set_ylim(plot_ymin*0.98,plot_ymax)
         #print plot_ymin,plot_ymax
+
+        plt.savefig(output_filename)
 
     return peak_loc
