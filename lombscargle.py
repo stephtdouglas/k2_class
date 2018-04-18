@@ -1,6 +1,6 @@
 from __future__ import print_function, division
 
-import os
+import os, sys
 import logging
 import pickle
 
@@ -17,6 +17,8 @@ from scipy.signal import argrelextrema
 
 import k2spin
 from k2spin import prot
+
+from kep_io import k2sc_io, k2sff_io
 
 
 def run_one(t,f,epic=None):
@@ -187,13 +189,18 @@ def run_list(list_filenames,output_filename):
     harm_types[:] = "-"
 
     for i,filename in enumerate(list_filenames):
-        epic = filename.split("/")[0].split("-")[0].split("_")[-1]
+        if "EPIC" in filename:
+            epic = filename.split("/")[-1].split("_")[1]
+        elif "k2sff" in filename:
+            epic = filename.split("/")[-1].split("_")[4].split("-")[0]
+        print(epic)
 
         if "k2sff" in filename:
-            best_ext = choose_initial_k2sff(filename)
+#             best_ext = choose_initial_k2sff(filename)
+            best_ext = 2
             time,flux = k2sff_io(filename,best_ext)
         elif "k2sc" in filename:
-            time,flux = k2sc_io(filename,best_ext)
+            time,flux = k2sc_io(filename)
         one_out = run_one(time,flux,epic)
 
         # Unpack analysis results
@@ -207,8 +214,8 @@ def run_list(list_filenames,output_filename):
                     bbox_inches="tight")
         plt.close()
 
-        if i>=10:
-            break
+#        if i>=10:
+#            break
 
     data = {"EPIC": epics,
             "fund_period": fund_periods,

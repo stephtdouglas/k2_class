@@ -66,13 +66,16 @@ def k2sc_io(filename):
     time, flux: arrays
 
     """
+    trend_t, trend_p, flux, time = "trtime", "trposi", "flux", "time"
+
     with fits.open(filename) as hdu:
         #print(hdu.info())
 
         table = hdu[1].data
-        good = np.isfinite(table["flux"]) & (np.isfinite(table["trend_t"]))
-        med_trend = np.median(table["trend_t"][good])
-        time = table["time"][good]
-        flux = table["flux"][good] + table["trend_t"][good] - med_trend
+        #print(table.dtype)
+        good = np.isfinite(table[flux]) & (np.isfinite(table[trend_t]))
+        med_trend = np.median(table[trend_t][good])
+        time = table[time][good]
+        flux = table[flux][good] + table[trend_t][good] - med_trend
 
     return time,flux
