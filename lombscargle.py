@@ -1,5 +1,6 @@
 from __future__ import print_function, division
 
+import os
 import logging
 import pickle
 
@@ -161,7 +162,7 @@ def run_one(t,f,epic=None):
             sec_period, sec_power, sigmas[0], extra_sig, harm_type)
 
 
-def run_list(list_filenames,output_filename,data_dir,plot_dir):
+def run_list(list_filenames,output_filename):
     """ Run a list of K2SFF or K2SC files through run_one(), and save results.
 
     Inputs:
@@ -169,10 +170,6 @@ def run_list(list_filenames,output_filename,data_dir,plot_dir):
     list_filenames: list or array of filename strings
 
     output_filenames: string, giving the output filename for a table of results
-
-    data_dir: directory that contains the data files
-
-    plot_dir: directory to save plots in
 
     """
 
@@ -193,10 +190,10 @@ def run_list(list_filenames,output_filename,data_dir,plot_dir):
         epic = filename.split("/")[0].split("-")[0].split("_")[-1]
 
         if "k2sff" in filename:
-            best_ext = choose_initial_k2sff(data_dir+filename)
-            time,flux = k2sff_io(data_dir+filename,best_ext)
+            best_ext = choose_initial_k2sff(filename)
+            time,flux = k2sff_io(filename,best_ext)
         elif "k2sc" in filename:
-            time,flux = k2sc_io(data_dir+filename,best_ext)
+            time,flux = k2sc_io(filename,best_ext)
         one_out = run_one(time,flux,epic)
 
         # Unpack analysis results
@@ -206,7 +203,7 @@ def run_list(list_filenames,output_filename,data_dir,plot_dir):
         epics[i] = epic
 
         # Save and close the plot files
-        plt.savefig("{0}EPIC{1}_lstest.png".format(plot_dir,epic),
+        plt.savefig("EPIC{0}_lstest.png".format(epic),
                     bbox_inches="tight")
         plt.close()
 
@@ -242,3 +239,23 @@ def run_list(list_filenames,output_filename,data_dir,plot_dir):
 
     at.write(data,output_filename,names=names,
              formats=formats,delimiter=",")
+
+if __name__=="__main__":
+    """
+    On the command line, provide a list of light curve files
+    (with full or relative paths), and an output filename with the
+    full or relative path.
+    """
+
+    # today = date.isoformat(date.today())
+#    logging.basicConfig(level=logging.INFO)
+
+    if len(sys.argv)<=2:
+        print("Please provide a list of light curve files and"
+              "an output filename")
+    else:
+        listfile = at.read(sys.argv[1])
+        file_list = listfile["filename"]
+        outfile = sys.argv[2]
+
+    run_list(file_list,outfile)
