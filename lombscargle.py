@@ -196,8 +196,7 @@ def run_list(list_filenames,output_filename):
         print(epic)
 
         if "k2sff" in filename:
-#             best_ext = choose_initial_k2sff(filename)
-            best_ext = 2
+            best_ext = choose_initial_k2sff(filename)
             time,flux = k2sff_io(filename,best_ext)
         elif "k2sc" in filename:
             time,flux = k2sc_io(filename)
@@ -251,7 +250,8 @@ if __name__=="__main__":
     """
     On the command line, provide a list of light curve files
     (with full or relative paths), and an output filename with the
-    full or relative path.
+    full or relative path, where the results for all objects will
+    be written.
     """
 
     # today = date.isoformat(date.today())
