@@ -1,0 +1,16 @@
+name: k2lcs
+
+channels:
+  - astropy
+
+dependencies:
+  - astropy
+  - numpy
+  - matplotlib
+  - scipy
+  - astroML
+  - pip:
+    - supersmoother
+    - astroML
+    - astroML_addons
+    - gatspy
