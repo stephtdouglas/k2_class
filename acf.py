@@ -2,6 +2,8 @@ from __future__ import print_function, division
 
 import logging
 
+import matplotlib
+matplotlib.use("agg")
 logging.basicConfig(level=logging.WARNING)
 from scipy import fftpack
 from astropy.convolution import convolve as ap_convolve
@@ -10,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import argrelextrema
 
+from kep_io import k2sc_io
 
 def run_fft(times,yvals,modes=np.arange(1,15,3),input_period=None,plot=False):
     """
@@ -121,10 +124,10 @@ def acf(times,yvals):
 
     """
 
-    # And the number of observations 
+    # And the number of observations
     # (the maximum lag that will be tested is half the number of observations)
     N = len(yvals)
-    max_lag = N/2
+    max_lag = N//2
     lags = np.arange(max_lag)
 
     # Calculate values for normalizing the ACF
@@ -160,8 +163,8 @@ def find_prot(periods,ACF):
 
     Returns:
     --------
-    best_period: 
-         the period corresponding to the first local maximum in the ACF, 
+    best_period:
+         the period corresponding to the first local maximum in the ACF,
          if there are no peaks in the ACF, returns -1
 
     """
@@ -204,7 +207,7 @@ def find_prot(periods,ACF):
         per_with_heights = per_with_heights[:-1]
         max_ACF_with_heights = max_ACF_with_heights[:-1]
         if len(peak_heights)==0:
-            print "No local minima to the right of any local maxima"
+            print("No local minima to the right of any local maxima")
             return -1
 
     for i,max_p in enumerate(per_with_heights):
@@ -233,8 +236,8 @@ def find_prot(periods,ACF):
 
 
 def run_acf(times,yvals,input_period=None,plot=False,output_filename="acf.png"):
-    """ 
-    Run the ACF on the input light curve, and plot the result if desired 
+    """
+    Run the ACF on the input light curve, and plot the result if desired
 
     Inputs:
     -------
@@ -250,8 +253,8 @@ def run_acf(times,yvals,input_period=None,plot=False,output_filename="acf.png"):
 
     Returns:
     --------
-    peak_loc: 
-         the period corresponding to the first local maximum in the ACF, 
+    peak_loc:
+         the period corresponding to the first local maximum in the ACF,
          if there are no peaks in the ACF, returns -1
 
 
@@ -301,3 +304,11 @@ def run_acf(times,yvals,input_period=None,plot=False,output_filename="acf.png"):
         plt.savefig(output_filename)
 
     return peak_loc
+
+if __name__=="__main__":
+
+    filename = "/Users/stephanie/Dropbox/K2/K2sc/EPIC_210491860_mast.fits"
+
+    t, f = k2sc_io(filename)
+
+    run_acf(t,f,plot=True,output_filename="EPIC_210491860_acf.png")
