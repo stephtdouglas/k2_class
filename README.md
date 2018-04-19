@@ -8,7 +8,7 @@ Dependencies: astropy, astroML, astroML_addons, gatspy, matplotlib, numpy, scipy
 
 There is a Dropbox directory containing detrended light curves from the K2 Systematics Correnction (K2SC; Aigrain et al. 2016) and K2 Self-flat fielded (K2SFF; Vanderburg & Johnson 2014) codes. You'll need to modify the .lst files to point to those directories on your computer. 
 
-To run a Lomb-Scargle Periodogram analysis on a set of lightcurves, use the lombscargle.py script. Note that it will not automatically overwrite files. 
+To run a Lomb-Scargle Periodogram analysis on a set of lightcurves, use the lombscargle.py script. Note that it will not automatically overwrite ascii files (figure files will, however, be overwritten).
 
     $ python lombscargle.py k2sc_all.lst k2sc_results.csv
 
