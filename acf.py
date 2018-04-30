@@ -1,5 +1,6 @@
 from __future__ import print_function, division
 
+import sys
 import logging
 
 import matplotlib
@@ -8,6 +9,7 @@ logging.basicConfig(level=logging.WARNING)
 from scipy import fftpack
 from astropy.convolution import convolve as ap_convolve
 from astropy.convolution import Box1DKernel, Gaussian1DKernel
+import astropy.io.ascii as at
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import argrelextrema
@@ -307,8 +309,10 @@ def run_acf(times,yvals,input_period=None,plot=False,output_filename="acf.png"):
 
 if __name__=="__main__":
 
-    filename = "/Users/stephanie/Dropbox/K2/K2sc/EPIC_210491860_mast.fits"
+    listfile = at.read(sys.argv[1])
+    file_list = listfile["filename"]
 
-    t, f = k2sc_io(filename)
-
-    run_acf(t,f,plot=True,output_filename="EPIC_210491860_acf.png")
+    for filename in file_list:
+        print(filename)
+        t, f = k2sc_io(filename)
+        run_acf(t,f,plot=True,output_filename=filename.split("/")[-1].replace(".fits",".png"))

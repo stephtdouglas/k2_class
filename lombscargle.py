@@ -198,7 +198,7 @@ def run_list(list_filenames,output_filename):
         if "k2sff" in filename:
 #             best_ext = choose_initial_k2sff(filename)
             time,flux = k2sff_io(filename,"best")
-        elif "k2sc" in filename:
+        elif "K2sc" in filename:
             time,flux = k2sc_io(filename)
         one_out = run_one(time,flux,epic)
 

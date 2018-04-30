@@ -15,3 +15,7 @@ dependencies:
     - astroML
     - astroML_addons
     - gatspy
+    - ez_setup
+    - pywcsgrid2
+    - K2fov
+    
